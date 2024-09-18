@@ -1,6 +1,7 @@
 {
   "name": "paymemei",
   "version": "0.1.0",
+  "description": "payment split app",
   "private": true,
   "scripts": {
     "dev": "next dev",
