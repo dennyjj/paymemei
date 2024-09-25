@@ -12,12 +12,12 @@ interface AddParticipantFormProps {
   setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
 }
 
-const AddParticipantForm: React.FC<AddParticipantFormProps> = ({ participants, setParticipants }) => {
+export default function AddParticipantForm({ participants, setParticipants }: AddParticipantFormProps) {
   const [name, setName] = useState('');
   const [amountPaid, setAmountPaid] = useState(0);
 
   const handleAddParticipant = () => {
-    const newParticipant: Participant = { name, amountPaid };
+    const newParticipant: Participant = { name, amountPaid: parseFloat(amountPaid.toFixed(2)) };
     setParticipants([...participants, newParticipant]);
     setName('');
     setAmountPaid(0);
@@ -29,12 +29,12 @@ const AddParticipantForm: React.FC<AddParticipantFormProps> = ({ participants, s
 
     return participants.map((p) => ({
       ...p,
-      needsToPay: equalShare - p.amountPaid,
+      needsToPay: parseFloat((equalShare - p.amountPaid).toFixed(2)),
       collectsFrom: participants
         .filter((other) => other.amountPaid < equalShare && other !== p)
         .map((other) => ({
           name: other.name,
-          amount: Math.min(equalShare - other.amountPaid, p.amountPaid - equalShare),
+          amount: parseFloat(Math.min(equalShare - other.amountPaid, p.amountPaid - equalShare).toFixed(2)),
         })),
     }));
   };
@@ -42,25 +42,48 @@ const AddParticipantForm: React.FC<AddParticipantFormProps> = ({ participants, s
   const updatedParticipants = calculateAmounts();
 
   return (
-    <div>
-      <form>
-        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <input type="number" placeholder="Amount Paid" value={amountPaid} onChange={(e) => setAmountPaid(Number(e.target.value))} />
-        <button type="button" onClick={handleAddParticipant}>
-          Add Participant
-        </button>
-      </form>
-      <div>
-        <h2>Participants</h2>
+    <div className="max-w-md mx-auto">
+      <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 className="text-2xl font-bold mb-4">Add Participant</h2>
+        <form className="space-y-4">
+          <div>
+            <input
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 bg-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <input
+              type="number"
+              placeholder="Amount Paid"
+              value={amountPaid}
+              onChange={(e) => setAmountPaid(parseFloat(e.target.value))}
+              className="w-full px-3 py-2 border border-gray-300 bg-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={handleAddParticipant}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+          >
+            Add Participant
+          </button>
+        </form>
+      </div>
+      <div className="bg-black shadow-md rounded px-8 pt-6 pb-8">
+        <h2 className="text-2xl font-bold mb-4">Participants</h2>
         {updatedParticipants.map((p) => (
-          <div key={p.name}>
-            <p>
+          <div key={p.name} className="mb-4 p-4 bg-gray-500 rounded-lg">
+            <p className="font-semibold">
               {p.name} paid ${p.amountPaid.toFixed(2)} and needs to pay ${p.needsToPay.toFixed(2)}
             </p>
             {p.collectsFrom.length > 0 && (
-              <div>
-                <p>{p.name} collects:</p>
-                <ul>
+              <div className="mt-2">
+                <p className="font-medium">{p.name} collects:</p>
+                <ul className="list-disc list-inside">
                   {p.collectsFrom.map((c) => (
                     <li key={c.name}>
                       {c.name} owes {p.name} ${c.amount.toFixed(2)}
@@ -74,6 +97,4 @@ const AddParticipantForm: React.FC<AddParticipantFormProps> = ({ participants, s
       </div>
     </div>
   );
-};
-
-export default AddParticipantForm;
+}

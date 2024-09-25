@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import AddParticipantForm, { Participant } from './AddParticipantForm';
+import EventOverview from './EventOverview';
 
-const NewEventButton: React.FC = () => {
+export default function NewEventButton() {
   const [eventCreated, setEventCreated] = useState(false);
   const [participants, setParticipants] = useState<Participant[]>([]);
 
@@ -10,14 +11,20 @@ const NewEventButton: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="flex justify-center mt-8">
       {!eventCreated ? (
-        <button onClick={handleCreateEvent}>New Event</button>
+        <button
+          onClick={handleCreateEvent}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+        >
+          New Event
+        </button>
       ) : (
-        <AddParticipantForm participants={participants} setParticipants={setParticipants} />
+        <div>
+          <AddParticipantForm participants={participants} setParticipants={setParticipants} />
+          <EventOverview participants={participants} />
+        </div>
       )}
     </div>
   );
-};
-
-export default NewEventButton;
+}
